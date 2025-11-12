@@ -1,0 +1,34 @@
+{
+	"folders": [
+		{
+			"name": "vscode-copilot-chat",
+			"path": "/projects/vscode-copilot-chat"
+		},
+        {
+			"name": "code-oss-workspace",
+			"path": "/projects/code-oss-workspace"
+		},
+		{
+			"name": "che-code",
+			"path": "/projects/che-code"
+		}
+	],
+	"extensions": {
+		"recommendations": [
+			"dbaeumer.vscode-eslint",
+			"redhat.vscode-yaml",
+			"mhutchie.git-graph",
+			"eamodio.gitlens",
+			"streetsidesoftware.code-spell-checker",
+			"johnpapa.winteriscoming",
+			"cnshenj.vscode-task-manager"
+		]
+	},
+	"settings": {
+		"workbench.colorTheme": "Winter is Coming (Light)",
+		"workbench.preferredDarkColorTheme": "Winter is Coming (Dark Blue)",
+		"workbench.preferredLightColorTheme": "Winter is Coming (Light)",
+		"editor.wordWrap": "on",
+		"files.autoSave": "off"
+	}
+}

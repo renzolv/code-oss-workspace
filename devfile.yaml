@@ -1,0 +1,71 @@
+schemaVersion: 2.2.0
+attributes:
+  controller.devfile.io/storage-type: per-workspace
+metadata:
+  name: dev-workspace-images
+projects:
+  - name: code-oss-workspace
+    git:
+      remotes:
+        origin: https://github.com/cgruver/code-oss-workspace.git
+      checkoutFrom:
+        remote: origin
+        revision: main
+  - name: vscode-copilot-chat
+    git:
+      remotes:
+        origin: https://github.com/cgruver/vscode-copilot-chat.git
+      checkoutFrom:
+        remote: origin
+        revision: main
+  - name: che-code
+    git:
+      remotes:
+        origin: https://github.com/cgruver/che-code.git
+      checkoutFrom:
+        remote: origin
+        revision: main
+components:
+- name: dev-tools
+  container:
+    image: nexus.clg.lab:5002/dev-spaces/vscode-dev:latest
+    memoryLimit: 6Gi
+    mountSources: true
+    env:
+    - name: SHELL
+      value: "/bin/zsh"
+    - name: HOME
+      value: "/projects/home"
+    - name: VSCODE_DEFAULT_WORKSPACE
+      value: "/projects/code-oss-workspace/codeoss.code-workspace"
+    - name: GOPATH
+      value: /projects/home/go
+- volume:
+    size: 20Gi
+  name: projects
+- name: prep-workspace
+  container:
+    args:
+      - '-c'
+      - >-
+        mkdir -p /projects/bin && cp /usr/bin/oc /projects/bin/oc && cp /usr/bin/kubectl /projects/bin/kubectl && if [[ -f ${HOME}/.kube/config ]]; then rm ${HOME}/.kube/config; fi
+    command:
+      - /bin/bash
+    image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+    mountSources: true
+    sourceMapping: /projects
+    memoryRequest: 128Mi
+    memoryLimit: 256Mi
+    cpuRequest: 10m
+    cpuLimit: 200m
+    env:
+    - name: HOME
+      value: "/projects/home"
+commands:
+- apply:
+    component: prep-workspace
+    label: Pre Start Prep
+  id: prep-workspace
+events:
+  preStart:
+    - prep-workspace
