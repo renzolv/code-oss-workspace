@@ -14,7 +14,8 @@ podman build -f build/dockerfiles/assembly.Dockerfile -t nexus.clg.lab:5002/dev-
 
 ```bash
 cp -r code checode-compilation
-rm -rf /checode-compilation/node_modules
+rm -rf checode-compilation/node_modules
+cd checode-compilation
 npm install --force
 NODE_ARCH=$(echo "console.log(process.arch)" | node)
 NODE_VERSION=$(cat /checode-compilation/remote/.npmrc | grep target | cut -d '=' -f 2 | tr -d '"')
