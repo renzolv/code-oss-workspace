@@ -69,3 +69,16 @@ npx tsx .esbuild.ts
 vsce package
 
 ```
+
+## Get proposed API list
+```bash
+for i in $(ls /projects/vscode-copilot-chat/src/extension/vscode.proposed.*)
+do
+  API=$(echo ${i} | cut -d"." -f3)
+  echo "\"${API}\","
+done
+```
+
+```bash
+curl -s -H "Authorization: Bearer ${GITHUB_OAUTH_TOKEN}" https://api.github.com/copilot_internal/user
+```
