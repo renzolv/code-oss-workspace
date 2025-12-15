@@ -79,6 +79,19 @@ do
 done
 ```
 
+## Create PAT
+```
+git clone https://github.com/cgruver/vscode-copilot-chat.git
+
+cd vscode-copilot-chat
+ 
+npm install
+
+npm run get_token
+```
+
 ```bash
 curl -s -H "Authorization: Bearer ${GITHUB_OAUTH_TOKEN}" https://api.github.com/copilot_internal/user
 ```
+
+Hey there
