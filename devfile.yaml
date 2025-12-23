@@ -22,7 +22,9 @@ components:
 - name: dev-tools
   container:
     image: nexus.clg.lab:5002/dev-spaces/vscode-dev:latest
+    memoryRequest: 2Gi
     memoryLimit: 50Gi
+    cpuRequest: 100m
     cpuLimit: "8"
     mountSources: true
     env:
