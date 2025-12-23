@@ -9,7 +9,8 @@
 			"path": "/projects/code-oss-workspace"
 		},
 		{
-			"path": "../vscode-copilot-chat"
+			"name": "vscode-copilot-chat",
+			"path": "/projects/vscode-copilot-chat"
 		}
 	],
 	"extensions": {
