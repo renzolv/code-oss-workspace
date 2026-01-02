@@ -35,6 +35,10 @@ EOF
 ```bash
 git clone https://github.com/cgruver/vscode-copilot-chat.git
 
+git remote add upstream https://github.com/microsoft/vscode-copilot-chat
+
+git fetch upstream release/0.35
+
 npm install
 
 npx @vscode/dts dev && mv vscode.proposed.*.ts src/extension
@@ -43,6 +47,12 @@ npx tsx .esbuild.ts
 
 vsce package
 
+```
+
+```bash
+mv package.json tmpfile.json
+jq 'del(.extensionPack)' tmpfile.json > package.json
+rm tmpfile.json
 ```
 
 ## Get proposed API list

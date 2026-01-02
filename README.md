@@ -13,40 +13,62 @@
    __Note:__ Replace `devspaces` with the namespace where the CheCluster is installed
 
    ```bash
-   oc create configmap che-code-copilot --from-file=che-code-editor-quay.yaml -n devspaces
+   INSTALL_NAMESPACE=devspaces
+   oc create configmap che-code-copilot --from-file=che-code-editor-quay.yaml -n ${INSTALL_NAMESPACE}
    ```
 
 1. Label the ConfigMap so that Dev Spaces is aware of it as an editor -
 
-   __Note:__ Replace `devspaces` with the namespace where the CheCluster is installed
-
    ```bash
-   oc label configmap che-code-copilot app.kubernetes.io/part-of=che.eclipse.org app.kubernetes.io/component=editor-definition -n devspaces
+   oc label configmap che-code-copilot app.kubernetes.io/part-of=che.eclipse.org app.kubernetes.io/component=editor-definition -n ${INSTALL_NAMESPACE}
    ```
 
 
-## Build the GitHub.copilot-chat extension -
+## Build the GitHub.copilot-chat extension and publish it to your OpenVSX registry instance -
+
+In my testing, I am self-hosting an OpenVSX instance following the pattern documented here - [https://github.com/cgruver/che-openvsx-registry](https://github.com/cgruver/che-openvsx-registry)
 
 ```bash
-git clone https://github.com/cgruver/vscode-copilot-chat.git
-
+##
+## Release 0.35.X is supported by VS Code v1.107 which this rebase is built from
+##
+CHAT_REVISION="release/0.35"
+##
+TEMP_DIR="$(mktemp -d)"
+git clone -b ${CHAT_REVISION} --single-branch https://github.com/microsoft/vscode-copilot-chat ${TEMP_DIR}
+pushd ${TEMP_DIR}
+##
+## Remove the extensionPack reference from package.json to eliminate a deprecation warning and prevent the extension from attempting to install github.copilot
+##
+mv package.json tmpfile.json
+jq 'del(.extensionPack)' tmpfile.json > package.json
+rm tmpfile.json
+##
 npm install
-
-npx @vscode/dts dev && mv vscode.proposed.*.ts src/extension
-
 npx tsx .esbuild.ts
-
 vsce package
-
+##
+## Publish the extension - Note, this process may be different if you are hosting OpenVSX in another way.
+##
+export OVSX_REGISTRY_URL=https://$(oc get route open-vsx-server -n che-openvsx -o jsonpath={.spec.host})
+export OVSX_PAT=eclipse_che_token
+export NODE_TLS_REJECT_UNAUTHORIZED='0'
+ovsx create-namespace GitHub
+ovsx publish --skip-duplicate copilot-chat-*.vsix
+popd
+rm -rf ${TEMP_DIR}
 ```
 
-## Create PAT
-```
-git clone https://github.com/cgruver/vscode-copilot-chat.git
+## Create a GitHub PAT
 
-cd vscode-copilot-chat
- 
+```bash
+TEMP_DIR="$(mktemp -d)"
+git clone https://github.com/microsoft/vscode-copilot-chat ${TEMP_DIR}
+pushd ${TEMP_DIR}
 npm install
-
 npm run get_token
+# Follow the instructions to generate the token
+# copy the token from the generated .env file and add it to your Dev Spaces user profile as a GitHub token
+pushd
+rm -rf ${TEMP_DIR}
 ```
