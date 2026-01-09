@@ -28,10 +28,11 @@
 
 In my testing, I am self-hosting an OpenVSX instance following the pattern documented here - [https://github.com/cgruver/che-openvsx-registry](https://github.com/cgruver/che-openvsx-registry)
 
-1. Release 0.35.X is supported by VS Code v1.107 which this rebase is built from
+1. Release 0.36.X is supported by VS Code v1.108 which this rebase is built from
 
    ```bash
-   export CHAT_REVISION="release/0.35"
+   export CHAT_REVISION="release/0.36"
+   ```
 
 1. Grab the code for the extension
 
@@ -53,7 +54,7 @@ In my testing, I am self-hosting an OpenVSX instance following the pattern docum
 
    ```bash
    npm install
-   npx tsx .esbuild.ts
+   npm run build
    vsce package
    ```
 

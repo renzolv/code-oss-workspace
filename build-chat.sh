@@ -12,7 +12,7 @@ mv package.json tmpfile.json
 jq 'del(.extensionPack)' tmpfile.json > package.json
 rm tmpfile.json
 npm install
-npx tsx .esbuild.ts
+npm run build
 vsce package
 ovsx create-namespace GitHub
 ovsx publish --skip-duplicate copilot-chat-*.vsix

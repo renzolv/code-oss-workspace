@@ -5,9 +5,9 @@ oc label configmap che-code-copilot app.kubernetes.io/part-of=che.eclipse.org ap
 ```
 
 ```bash
-podman build -f build/dockerfiles/linux-libc-ubi9.Dockerfile -t linux-libc-ubi9 .
+podman build -f build/dockerfiles/clg-rebase-linux-libc-ubi9.Containerfile -t linux-libc-ubi9 .
 export DOCKER_BUILDKIT=1
-podman build -f build/dockerfiles/assembly.Dockerfile -t nexus.clg.lab:5002/dev-spaces/che-code:latest .
+podman build -f build/dockerfiles/clg-rebase-assembly.Containerfile -t nexus.clg.lab:5002/dev-spaces/che-code:latest .
 podman push nexus.clg.lab:5002/dev-spaces/che-code:latest
 ```
 
@@ -33,20 +33,21 @@ EOF
 
 ## Build github-chat
 ```bash
-git clone https://github.com/cgruver/vscode-copilot-chat.git
+git clone https://github.com/microsoft/vscode-copilot-chat
 
-git remote add upstream https://github.com/microsoft/vscode-copilot-chat
+git checkout release/0.36
 
-git fetch upstream release/0.35
+mv package.json tmpfile.json
+jq 'del(.extensionPack)' tmpfile.json > package.json
+rm tmpfile.json
 
 npm install
 
-npx @vscode/dts dev && mv vscode.proposed.*.ts src/extension
-
-npx tsx .esbuild.ts
+npm run build
 
 vsce package
 
+npx @vscode/dts dev && mv vscode.proposed.*.ts src/extension
 ```
 
 ```bash
