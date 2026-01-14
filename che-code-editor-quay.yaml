@@ -90,7 +90,7 @@ events:
 components:
   - name: che-code-injector
     container:
-      image: quay.io/cgruver0/che/che-code:copilot-latest
+      image: quay.io/cgruver0/che/che-code:copilot-stable
       command:
         - /entrypoint-init-container.sh
       volumeMounts:
