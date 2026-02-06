@@ -1,8 +1,8 @@
 schemaVersion: 2.2.0
-attributes:
-  controller.devfile.io/storage-type: per-workspace
 metadata:
   name: code-oss-workspace
+attributes:
+  controller.devfile.io/storage-type: per-workspace
 projects:
   - name: code-oss-workspace
     git:
@@ -19,47 +19,46 @@ projects:
         remote: origin
         revision: main
 components:
-- name: dev-tools
-  container:
-    image: nexus.clg.lab:5002/dev-spaces/vscode-dev:latest
-    memoryRequest: 2Gi
-    memoryLimit: 50Gi
-    cpuRequest: 100m
-    cpuLimit: "8"
-    mountSources: true
-    env:
-    - name: SHELL
-      value: "/bin/zsh"
-    - name: HOME
-      value: "/projects/home"
-    - name: VSCODE_DEFAULT_WORKSPACE
-      value: "/projects/code-oss-workspace/codeoss.code-workspace"
-- volume:
-    size: 20Gi
-  name: projects
-- name: prep-workspace
-  container:
-    args:
-      - '-c'
-      - >-
-        mkdir -p /projects/bin && cp /usr/bin/oc /projects/bin/oc && cp /usr/bin/kubectl /projects/bin/kubectl && if [[ -f ${HOME}/.kube/config ]]; then rm ${HOME}/.kube/config; fi
-    command:
-      - /bin/bash
-    image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
-    mountSources: true
-    sourceMapping: /projects
-    memoryRequest: 128Mi
-    memoryLimit: 256Mi
-    cpuRequest: 10m
-    cpuLimit: 200m
-    env:
-    - name: HOME
-      value: "/projects/home"
+  - name: dev-tools
+    container:
+      image: nexus.clg.lab:5002/dev-spaces/vscode-dev:latest
+      memoryRequest: 256M
+      memoryLimit: 6Gi
+      cpuRequest: 100m
+      cpuLimit: 2000m
+      mountSources: true
+      env:
+        - name: SHELL
+          value: /bin/zsh
+        - name: HOME
+          value: /projects/home
+        - name: VSCODE_DEFAULT_WORKSPACE
+          value: /projects/code-oss-workspace/codeoss.code-workspace
+  - volume:
+      size: 1Gi
+    name: projects
+  - name: prep-workspace
+    container:
+      args:
+        - '-c'
+        - mkdir -p /projects/bin && cp /usr/bin/oc /projects/bin/oc && cp /usr/bin/kubectl /projects/bin/kubectl && if [[ -f ${HOME}/.kube/config ]]; then rm ${HOME}/.kube/config; fi
+      command:
+        - /bin/bash
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+      mountSources: true
+      sourceMapping: /projects
+      memoryRequest: 128Mi
+      memoryLimit: 256Mi
+      cpuRequest: 10m
+      cpuLimit: 200m
+      env:
+        - name: HOME
+          value: /projects/home
 commands:
-- apply:
-    component: prep-workspace
-    label: Pre Start Prep
-  id: prep-workspace
+  - apply:
+      component: prep-workspace
+      label: Pre Start Prep
+    id: prep-workspace
 events:
   preStart:
     - prep-workspace
